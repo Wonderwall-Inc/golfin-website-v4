@@ -54,6 +54,7 @@ export const Posts: CollectionConfig = {
       name: 'title',
       type: 'text',
       required: true,
+      localized: true
     },
     {
       type: 'tabs',

@@ -14,23 +14,8 @@ import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 
-export async function generateStaticParams() {
-  const payload = await getPayloadHMR({ config: configPromise })
-  const pages = await payload.find({
-    collection: 'pages',
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
-  })
 
-  return pages.docs
-    ?.filter((doc) => {
-      return doc.slug !== 'home'
-    })
-    .map(({ slug }) => slug)
-}
-
-export default async function Page({ params: { slug = 'en' } }) {
+export default async function Page({ params: { slug = '' } }) {
   const url = '/' + slug
 
   let page: PageType | null
@@ -39,23 +24,13 @@ export default async function Page({ params: { slug = 'en' } }) {
     slug,
   })
 
-  // Remove this code once your website is seeded
-  if (!page) {
-    page = homeStatic
-  }
-
-  if (!page) {
-    return <PayloadRedirects url={url} />
-  }
-
-
   const { hero, layout } = page
 
   return (
     <article className="pt-16 pb-24">
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
-      Root Page
+      <div>Root News Page</div>
       <RenderHero {...hero} />
       <RenderBlocks blocks={layout} />
     </article>

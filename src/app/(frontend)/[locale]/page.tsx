@@ -49,11 +49,25 @@ export default async function Page({ params: { slug = 'home' } }) {
 
   const { hero, layout } = page
 
+  const payload = await getPayloadHMR({ config: configPromise })
+
+  const posts = await payload.find({
+    collection: 'posts',
+    locale: slug === 'en-us' ? 'en' : 'ja',
+    depth: 1,
+    limit: 12,
+  })
+
   return (
     <article className="pt-16 pb-24">
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
-
+      {posts.docs.map(post => (
+        <React.Fragment key={post.id}>
+          <h1>{post.title}</h1>
+        </React.Fragment>
+      ))}
+      Localized Root Page
       <RenderHero {...hero} />
       <RenderBlocks blocks={layout} />
     </article>

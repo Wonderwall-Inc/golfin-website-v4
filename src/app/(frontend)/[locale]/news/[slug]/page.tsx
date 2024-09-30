@@ -6,77 +6,60 @@ import configPromise from '@payload-config'
 import { getPayloadHMR } from '@payloadcms/next/utilities'
 import { draftMode } from 'next/headers'
 import React, { cache } from 'react'
-import { homeStatic } from '@/endpoints/seed/home-static'
 
-import type { Page as PageType } from '@/payload-types'
+import type { Page, Post } from '@/payload-types'
 
-import { RenderBlocks } from '@/blocks/RenderBlocks'
-import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 
 export async function generateStaticParams() {
   const payload = await getPayloadHMR({ config: configPromise })
   const pages = await payload.find({
-    collection: 'pages',
+    collection: 'posts',
     draft: false,
     limit: 1000,
     overrideAccess: false,
   })
 
   return pages.docs
-    ?.filter((doc) => {
-      return doc.slug !== 'home'
-    })
-    .map(({ slug }) => slug)
+    .map(({ slug }) => slug as string + 1)
 }
 
-export default async function Page({ params: { slug = 'en' } }) {
+export default async function Page({ params: { locale, slug = '' } }) {
   const url = '/' + slug
 
-  let page: PageType | null
+  let post: Post | null
 
-  page = await queryPageBySlug({
+  post = await queryNewsPostById({
     slug,
   })
 
-  // Remove this code once your website is seeded
-  if (!page) {
-    page = homeStatic
-  }
-
-  if (!page) {
-    return <PayloadRedirects url={url} />
-  }
-
-
-  const { hero, layout } = page
+  if (!post) return <PayloadRedirects url={url} />
 
   return (
     <article className="pt-16 pb-24">
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
-      Root Page
-      <RenderHero {...hero} />
-      <RenderBlocks blocks={layout} />
+      Single News Item Page
+      {post.title}
     </article>
   )
 }
 
-export async function generateMetadata({ params: { slug = 'home' } }): Promise<Metadata> {
-  const page = await queryPageBySlug({
-    slug,
+export async function generateMetadata({ params: { slug = '' } }): Promise<Metadata> {
+  const page = await queryNewsPostById({
+    slug
   })
 
   return generateMeta({ doc: page })
 }
 
-const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
+const queryNewsPostById = cache(async ({ slug }: { slug: string }) => {
   const { isEnabled: draft } = draftMode()
 
   const payload = await getPayloadHMR({ config: configPromise })
 
   const result = await payload.find({
-    collection: 'pages',
+    collection: 'posts',
     draft,
     limit: 1,
     overrideAccess: true,
