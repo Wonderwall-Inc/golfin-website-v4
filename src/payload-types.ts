@@ -30,7 +30,7 @@ export interface Config {
     header: Header;
     footer: Footer;
   };
-  locale: null;
+  locale: 'en' | 'ja';
   user: User & {
     collection: 'users';
   };

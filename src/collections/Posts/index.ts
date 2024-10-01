@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import { getLocalizedPaths, type CollectionConfig } from 'payload'
 
 import {
   BlocksFeature,
@@ -26,6 +26,7 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { slugField } from '@/fields/slug'
+import { fieldIsLocalized } from 'node_modules/payload/dist/fields/config/types'
 
 export const Posts: CollectionConfig = {
   slug: 'posts',
@@ -54,6 +55,7 @@ export const Posts: CollectionConfig = {
       name: 'title',
       type: 'text',
       required: true,
+      localized: true,
     },
     {
       type: 'tabs',
@@ -118,7 +120,7 @@ export const Posts: CollectionConfig = {
             OverviewField({
               titlePath: 'meta.title',
               descriptionPath: 'meta.description',
-              imagePath: 'meta.image',
+              imagePath: 'meta.image'
             }),
             MetaTitleField({
               hasGenerateFn: true,
@@ -126,12 +128,10 @@ export const Posts: CollectionConfig = {
             MetaImageField({
               relationTo: 'media',
             }),
-
             MetaDescriptionField({}),
             PreviewField({
               // if the `generateUrl` function is configured
               hasGenerateFn: true,
-
               // field paths to match the target field for data
               titlePath: 'meta.title',
               descriptionPath: 'meta.description',
@@ -200,11 +200,7 @@ export const Posts: CollectionConfig = {
     afterRead: [populateAuthors],
   },
   versions: {
-    drafts: {
-      autosave: {
-        interval: 100, // We set this interval for optimal live preview
-      },
-    },
+    drafts: {},
     maxPerDoc: 50,
   },
 }

@@ -132,6 +132,11 @@ export default buildConfig({
     },
   ],
   globals: [Header, Footer],
+  localization: {
+    locales: ['en', 'ja'],
+    defaultLocale: 'en',
+    fallback: true
+  },
   plugins: [
     redirectsPlugin({
       collections: ['pages', 'posts'],
@@ -161,6 +166,14 @@ export default buildConfig({
     seoPlugin({
       generateTitle,
       generateURL,
+      fieldOverrides: {
+        title: {
+          localized: true
+        },
+        description: {
+          localized: true
+        }
+      }
     }),
     formBuilderPlugin({
       fields: {
