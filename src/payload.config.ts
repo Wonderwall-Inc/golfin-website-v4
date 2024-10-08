@@ -29,8 +29,11 @@ import { seedHandler } from './endpoints/seedHandler'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { revalidateRedirects } from './hooks/revalidateRedirects'
+import { cloudStoragePlugin } from '@payloadcms/plugin-cloud-storage'
+import { s3Adapter } from '@payloadcms/plugin-cloud-storage/s3'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { Page, Post } from 'src/payload-types'
+
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -44,6 +47,21 @@ const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
     ? `${process.env.NEXT_PUBLIC_SERVER_URL!}/${doc.slug}`
     : process.env.NEXT_PUBLIC_SERVER_URL!
 }
+
+
+const adapter = s3Adapter({
+  config: {
+    credentials: {
+      accessKeyId: process.env.S3_ACCESS_KEY_ID!,
+      secretAccessKey: process.env.S3_SECRET_ACCESS_KEY!,
+    },
+    endpoint: process.env.S3_ENDPOINT,
+    forcePathStyle: true, // Important for Supabase
+    region: process.env.S3_REGION,
+  },
+  bucket: process.env.S3_BUCKET!,
+
+})
 
 export default buildConfig({
   admin: {
@@ -117,7 +135,7 @@ export default buildConfig({
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URI || '',
-    },
+    }
   }),
   collections: [Pages, Posts, Media, Categories, Users],
   cors: [process.env.PAYLOAD_PUBLIC_SERVER_URL || ''].filter(Boolean),
@@ -138,6 +156,14 @@ export default buildConfig({
     fallback: true
   },
   plugins: [
+    cloudStoragePlugin({
+      collections: {
+        media: {
+          adapter,
+          prefix: 'media'
+        },
+      },
+    }),
     redirectsPlugin({
       collections: ['pages', 'posts'],
       overrides: {
