@@ -9,11 +9,11 @@ export function middleware(request: NextRequest) {
 
   if (pathname === '/') {
     url.pathname = browserLanguage === '/ja' ? '/ja-jp' : '/en-us'
-    NextResponse.redirect(new URL(url.pathname, request.url))
+    return NextResponse.redirect(new URL(url.pathname, request.url))
   }
 
   if (pathname === '/en') {
-    NextResponse.redirect(new URL(`/en-us`, request.url))
+    return NextResponse.redirect(new URL(`/en-us`, request.url))
   }
 
   return NextResponse.next()

@@ -39,16 +39,16 @@ export const Posts: CollectionConfig = {
   admin: {
     defaultColumns: ['title', 'slug', 'updatedAt'],
     livePreview: {
-      url: ({ data }) => {
+      url: ({ data, locale }) => {
         const path = generatePreviewPath({
-          path: `/posts/${typeof data?.slug === 'string' ? data.slug : ''}`,
+          path: `/${locale.code === 'en' ? 'en-us' : 'ja'}/news/${typeof data?.slug === 'string' ? data.slug : ''}`,
         })
         return `${process.env.NEXT_PUBLIC_SERVER_URL}${path}`
       },
     },
-    preview: (doc) =>
-      generatePreviewPath({ path: `/posts/${typeof doc?.slug === 'string' ? doc.slug : ''}` }),
-    useAsTitle: 'title',
+    preview: (doc, options) =>
+      generatePreviewPath({ path: `/${options.locale === 'en' ? 'en-us' : 'ja'}/news/${typeof doc?.slug === 'string' ? doc.slug : ''}` }),
+    useAsTitle: 'title'
   },
   fields: [
     {
@@ -58,6 +58,19 @@ export const Posts: CollectionConfig = {
       localized: true,
     },
     {
+      name: 'description',
+      type: 'text',
+      required: false,
+      localized: true,
+      maxLength: 120
+    },
+    {
+      name: 'thumbnail',
+      type: 'upload',
+      required: true,
+      relationTo: 'media'
+    },
+    {
       type: 'tabs',
       tabs: [
         {
@@ -65,6 +78,7 @@ export const Posts: CollectionConfig = {
             {
               name: 'content',
               type: 'richText',
+              localized: true,
               editor: lexicalEditor({
                 features: ({ rootFeatures }) => {
                   return [

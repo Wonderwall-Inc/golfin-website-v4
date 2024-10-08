@@ -10,7 +10,7 @@ type LinkGroupType = (options?: {
   overrides?: Partial<ArrayField>
 }) => Field
 
-export const linkGroup: LinkGroupType = ({ appearances, overrides = {} } = {}) => {
+export const linkGroup: LinkGroupType = ({ appearances, overrides = {} } = {}): ArrayField => {
   const generatedLinkGroup: Field = {
     name: 'links',
     type: 'array',

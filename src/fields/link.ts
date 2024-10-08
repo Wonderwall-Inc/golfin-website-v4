@@ -1,4 +1,4 @@
-import type { Field } from 'payload'
+import type { Field, GroupField } from 'payload'
 
 import deepMerge from '@/utilities/deepMerge'
 
@@ -21,7 +21,7 @@ type LinkType = (options?: {
   overrides?: Record<string, unknown>
 }) => Field
 
-export const link: LinkType = ({ appearances, disableLabel = false, overrides = {} } = {}) => {
+export const link: LinkType = ({ appearances, disableLabel = false, overrides = {} } = {}): GroupField => {
   const linkResult: Field = {
     name: 'link',
     type: 'group',
