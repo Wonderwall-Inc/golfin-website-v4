@@ -27,7 +27,7 @@ interface ChildrenContent {
   version: number
 }
 
-const truncateContent = (text: string) => text.substring(0, 120) + '...'
+const truncateContent = (text: string) => text.length >= 120 ? text.substring(0, 120) + '...' : text
 const sanitizeDescription = (text: string) => text.replace(/\s/g, ' ')
 
 export const Card: React.FC<CardProps> = (props) => {
