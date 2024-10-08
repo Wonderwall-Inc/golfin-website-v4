@@ -52,15 +52,13 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
   const sizes = sizeFromProps
     ? sizeFromProps
     : Object.entries(breakpoints)
-        .map(([, value]) => `(max-width: ${value}px) ${value}px`)
-        .join(', ')
+      .map(([, value]) => `(max-width: ${value}px) ${value}px`)
+      .join(', ')
 
   return (
     <NextImage
       alt={alt || ''}
       className={cn(imgClassName)}
-      fill={fill}
-      height={!fill ? height : undefined}
       onClick={onClick}
       onLoad={() => {
         setIsLoading(false)
@@ -72,7 +70,12 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
       quality={90}
       sizes={sizes}
       src={src}
-      width={!fill ? width : undefined}
+      width={0}
+      height={0}
+      style={{
+        width: fill ? '100%' : width,
+        height: fill ? 'auto' : width
+      }}
     />
   )
 }

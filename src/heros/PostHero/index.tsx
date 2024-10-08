@@ -8,12 +8,15 @@ import { Media } from '@/components/Media'
 export const PostHero: React.FC<{
   post: Post
 }> = ({ post }) => {
-  const { categories, meta: { image: metaImage } = {}, populatedAuthors, publishedAt, title } = post
+  const { categories, meta: { image: metaImage } = {}, populatedAuthors, publishedAt, title, thumbnail } = post
 
   return (
-    <div className="relative -mt-[10.4rem] flex items-end">
+    <div className="relative flex items-end">
       <div className="container z-10 relative lg:grid lg:grid-cols-[1fr_48rem_1fr] text-white pb-8">
-        <div className="col-start-1 col-span-1 md:col-start-2 md:col-span-2">
+        <div className="col-start-1 col-span-1 md:col-start-2 md:col-span-1">
+          <div className="pb-16">
+            {thumbnail && <Media className="relative w-full" resource={thumbnail} fill />}
+          </div>
           <div className="uppercase text-sm mb-6">
             {categories?.map((category, index) => {
               if (typeof category === 'object' && category !== null) {
