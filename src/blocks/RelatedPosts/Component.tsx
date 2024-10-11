@@ -7,6 +7,7 @@ import type { Post } from '@/payload-types'
 import { Card } from '../../components/Card'
 
 export type RelatedPostsProps = {
+  locale: 'en-us' | 'ja'
   className?: string
   docs?: Post[]
   introContent?: any
@@ -23,7 +24,7 @@ export const RelatedPosts: React.FC<RelatedPostsProps> = (props) => {
         {docs?.map((doc, index) => {
           if (typeof doc === 'string') return null
 
-          return <Card key={index} doc={doc} relationTo="posts" showCategories />
+          return <Card key={index} doc={doc} relationTo="posts" showCategories locale={props.locale} />
         })}
       </div>
     </div>

@@ -10,7 +10,8 @@ import React from 'react'
 export const dynamic = 'force-static'
 export const revalidate = 600
 
-export default async function Page({ params: { pageNumber = 2 } }) {
+export default async function Page({ params }) {
+  const { pageNumber = 2 } = (await params)
   const payload = await getPayloadHMR({ config: configPromise })
 
   const posts = await payload.find({
@@ -37,18 +38,19 @@ export default async function Page({ params: { pageNumber = 2 } }) {
         />
       </div>
 
-      <CollectionArchive posts={posts.docs} />
+      <CollectionArchive posts={posts.docs} locale={(await params).locale} />
 
       <div className="container">
         {posts.totalPages > 1 && posts.page && (
-          <Pagination page={posts.page} totalPages={posts.totalPages} />
+          <Pagination page={posts.page} totalPages={posts.totalPages} locale={(await params).locale} />
         )}
       </div>
     </div>
   )
 }
 
-export function generateMetadata({ params: { pageNumber = 2 } }): Metadata {
+export function generateMetadata({ params }): Metadata {
+  const { pageNumber = 2 } = params
   return {
     title: `Payload Website Template Posts Page ${pageNumber}`,
   }

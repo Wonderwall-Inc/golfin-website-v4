@@ -48,6 +48,66 @@ const PaginationLink = ({ className, isActive, size = 'icon', ...props }: Pagina
 )
 PaginationLink.displayName = 'PaginationLink'
 
+const PaginationFirst = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof PaginationLink>) => (
+  <PaginationLink
+    aria-label="Go to the first page"
+    className={cn('gap-1 pl-2.5', className)}
+    size="default"
+    {...props}
+  >
+    <ChevronLeft className="h-4 w-4" />
+    <span>First</span>
+  </PaginationLink>
+)
+PaginationFirst.displayName = 'PaginationFirst'
+
+const PaginationLast = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof PaginationLink>) => (
+  <PaginationLink
+    aria-label="Go to the last page"
+    className={cn('gap-1 pl-2.5', className)}
+    size="default"
+    {...props}
+  >
+    <ChevronRight className="h-4 w-4" />
+    <span>Last</span>
+  </PaginationLink>
+)
+PaginationLast.displayName = 'PaginationLast'
+
+const PaginationSkip = ({
+  className,
+  direction,
+  ...props
+}: React.ComponentProps<typeof PaginationLink> & { direction: 'left' | 'right' }) => (
+  <PaginationLink
+    aria-label="Go to the last page"
+    className={cn('gap-1 pl-2.5', className)}
+    size="default"
+    {...props}
+  >
+    {direction === 'left' && (
+      <>
+        <ChevronLeft className="h-4 w-4" />
+        <span>Skip 2</span>
+      </>
+    )}
+
+    {direction === 'right' && (
+      <>
+        <span>Skip 2</span>
+        <ChevronRight className="h-4 w-4" />
+      </>
+    )}
+  </PaginationLink>
+)
+PaginationSkip.displayName = 'PaginationSkip'
+
 const PaginationPrevious = ({
   className,
   ...props
@@ -97,4 +157,7 @@ export {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  PaginationFirst,
+  PaginationLast,
+  PaginationSkip
 }

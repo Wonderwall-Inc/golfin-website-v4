@@ -26,7 +26,8 @@ export async function generateStaticParams() {
   return posts.docs?.map(({ slug }) => slug)
 }
 
-export default async function Post({ params: { slug = '' } }) {
+export default async function Post({ params }) {
+  const { slug = '' } = (await params)
   const url = '/posts/' + slug
   const post = await queryPostBySlug({ slug })
 
@@ -52,6 +53,7 @@ export default async function Post({ params: { slug = '' } }) {
 
         {post.relatedPosts && post.relatedPosts.length > 0 && (
           <RelatedPosts
+            locale={(await params).locale}
             className="mt-12"
             docs={post.relatedPosts.filter((post) => typeof post === 'object')}
           />
@@ -62,17 +64,17 @@ export default async function Post({ params: { slug = '' } }) {
 }
 
 export async function generateMetadata({
-  params: { slug },
-}: {
-  params: { slug: string }
+  params
 }): Promise<Metadata> {
+  const { slug } = (await params)
   const post = await queryPostBySlug({ slug })
 
   return generateMeta({ doc: post })
 }
 
-const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
-  const { isEnabled: draft } = draftMode()
+const queryPostBySlug = cache(async (params) => {
+  const { slug } = (await params)
+  const { isEnabled: draft } = await draftMode()
 
   const payload = await getPayloadHMR({ config: configPromise })
 
