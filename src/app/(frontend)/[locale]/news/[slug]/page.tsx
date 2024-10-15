@@ -30,11 +30,10 @@ export async function generateStaticParams() {
   return posts.docs?.map(({ slug }) => slug)
 }
 
-export default async function Post({ params: { locale, slug = '' } }) {
+export default async function Post({ params }) {
+  const { locale, slug } = await params
   const url = '/news/' + slug
   const post = await queryPost({ locale, slug })
-
-  if (!post) return <PayloadRedirects url={url} />
 
   return (
     <article className="pt-16 pb-16">
@@ -56,6 +55,7 @@ export default async function Post({ params: { locale, slug = '' } }) {
 
         {post.relatedPosts && post.relatedPosts.length > 0 && (
           <RelatedPosts
+            locale={(await params).locale}
             className="mt-12"
             docs={post.relatedPosts.filter((post) => typeof post === 'object')}
           />
@@ -66,16 +66,16 @@ export default async function Post({ params: { locale, slug = '' } }) {
 }
 
 export async function generateMetadata({
-  params: { locale, slug },
-}: {
-  params: { locale: string, slug: string }
+  params
 }): Promise<Metadata> {
+  const { locale, slug } = await params
   const post = await queryPost({ locale, slug })
   return generateMeta({ doc: post })
 }
 
-const queryPost = cache(async ({ locale, slug }: { locale: string, slug: string }) => {
-  const { isEnabled: draft } = draftMode()
+const queryPost = cache(async (params) => {
+  const { isEnabled: draft } = await draftMode()
+  const { locale, slug } = await params
 
   const payload = await getPayloadHMR({ config: configPromise })
 

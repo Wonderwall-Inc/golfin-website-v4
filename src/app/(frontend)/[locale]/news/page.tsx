@@ -1,5 +1,4 @@
 import type { Metadata } from 'next/types'
-
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
@@ -17,8 +16,8 @@ export default async function Page({ params }) {
   const newsPosts = await payload.find({
     collection: 'posts',
     depth: 1,
-    limit: 12,
-    locale: urlLocaleToLangCodeMap.get(params.locale),
+    limit: 5,
+    locale: urlLocaleToLangCodeMap.get((await params).locale),
     where: {
       'categories.title': {
         equals: 'News'
@@ -38,16 +37,16 @@ export default async function Page({ params }) {
         <PageRange
           collection="posts"
           currentPage={newsPosts.page}
-          limit={12}
+          limit={newsPosts.totalPages}
           totalDocs={newsPosts.totalDocs}
         />
       </div>
 
-      <CollectionArchive posts={newsPosts.docs} />
+      <CollectionArchive posts={newsPosts.docs} locale={(await params).locale} />
 
       <div className="container">
         {newsPosts.totalPages > 1 && newsPosts.page && (
-          <Pagination page={newsPosts.page} totalPages={newsPosts.totalPages} />
+          <Pagination page={Number(newsPosts.page)} totalPages={newsPosts.totalPages} locale={(await params).locale} />
         )}
       </div>
     </div>

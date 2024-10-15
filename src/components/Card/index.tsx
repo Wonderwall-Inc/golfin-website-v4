@@ -16,6 +16,7 @@ interface CardProps {
   relationTo?: 'posts'
   showCategories?: boolean
   title?: string
+  locale: 'en-us' | 'ja'
 }
 interface ChildrenContent {
   mode: string
@@ -40,7 +41,8 @@ export const Card: React.FC<CardProps> = (props) => {
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0
   const titleToUse = titleFromProps || title
   const pathname = usePathname()
-  const href = `${pathname}/${slug}`
+
+  const href = `/${props.locale}/news/${slug}`
 
   let postDescription
 

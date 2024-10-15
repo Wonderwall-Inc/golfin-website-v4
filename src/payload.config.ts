@@ -29,8 +29,7 @@ import { seedHandler } from './endpoints/seedHandler'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { revalidateRedirects } from './hooks/revalidateRedirects'
-import { cloudStoragePlugin } from '@payloadcms/plugin-cloud-storage'
-import { s3Adapter } from '@payloadcms/plugin-cloud-storage/s3'
+import { s3Storage } from '@payloadcms/storage-s3'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { Page, Post } from 'src/payload-types'
 
@@ -47,21 +46,6 @@ const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
     ? `${process.env.NEXT_PUBLIC_SERVER_URL!}/${doc.slug}`
     : process.env.NEXT_PUBLIC_SERVER_URL!
 }
-
-
-const adapter = s3Adapter({
-  config: {
-    credentials: {
-      accessKeyId: process.env.S3_ACCESS_KEY_ID!,
-      secretAccessKey: process.env.S3_SECRET_ACCESS_KEY!,
-    },
-    endpoint: process.env.S3_ENDPOINT,
-    forcePathStyle: true, // Important for Supabase
-    region: process.env.S3_REGION,
-  },
-  bucket: process.env.S3_BUCKET!,
-
-})
 
 export default buildConfig({
   admin: {
@@ -156,13 +140,22 @@ export default buildConfig({
     fallback: true
   },
   plugins: [
-    cloudStoragePlugin({
+    s3Storage({
       collections: {
         media: {
-          adapter,
           prefix: 'media'
         },
       },
+      config: {
+        credentials: {
+          accessKeyId: process.env.S3_ACCESS_KEY_ID!,
+          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY!,
+        },
+        endpoint: process.env.S3_ENDPOINT,
+        forcePathStyle: true, // Important for Supabase
+        region: process.env.S3_REGION,
+      },
+      bucket: process.env.S3_BUCKET!,
     }),
     redirectsPlugin({
       collections: ['pages', 'posts'],

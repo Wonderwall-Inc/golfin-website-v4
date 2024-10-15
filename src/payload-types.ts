@@ -332,13 +332,13 @@ export interface Post {
     [k: string]: unknown;
   };
   relatedPosts?: (number | Post)[] | null;
-  categories?: (number | Category)[] | null;
+  categories: (number | Category)[];
   meta?: {
     title?: string | null;
     image?: (number | null) | Media;
     description?: string | null;
   };
-  publishedAt?: string | null;
+  publishedAt: string;
   authors?: (number | User)[] | null;
   populatedAuthors?:
     | {

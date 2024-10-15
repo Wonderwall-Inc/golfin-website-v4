@@ -26,7 +26,6 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { slugField } from '@/fields/slug'
-import { fieldIsLocalized } from 'node_modules/payload/dist/fields/config/types'
 
 export const Posts: CollectionConfig = {
   slug: 'posts',
@@ -41,13 +40,23 @@ export const Posts: CollectionConfig = {
     livePreview: {
       url: ({ data, locale }) => {
         const path = generatePreviewPath({
-          path: `/${locale.code === 'en' ? 'en-us' : 'ja'}/news/${typeof data?.slug === 'string' ? data.slug : ''}`,
+          locale: locale.code === 'en' ? 'en-us' : 'ja',
+          slug: typeof data?.slug === 'string' ? data.slug : '',
+          collection: 'posts',
         })
-        return `${process.env.NEXT_PUBLIC_SERVER_URL}${path}`
+
+        return process.env.NODE_ENV === 'development' ? `${process.env.NEXT_PUBLIC_SERVER_URL}${path}` : path
       },
     },
-    preview: (doc, options) =>
-      generatePreviewPath({ path: `/${options.locale === 'en' ? 'en-us' : 'ja'}/news/${typeof doc?.slug === 'string' ? doc.slug : ''}` }),
+    preview: (data, options) => {
+      const path = generatePreviewPath({
+        locale: options.locale === 'en' ? 'en-us' : 'ja',
+        slug: typeof data?.slug === 'string' ? data.slug : '',
+        collection: 'posts',
+      })
+
+      return process.env.NODE_ENV === 'development' ? `${process.env.NEXT_PUBLIC_SERVER_URL}${path}` : path
+    },
     useAsTitle: 'title'
   },
   fields: [
@@ -117,6 +126,7 @@ export const Posts: CollectionConfig = {
             },
             {
               name: 'categories',
+              required: true,
               type: 'relationship',
               admin: {
                 position: 'sidebar',
@@ -157,6 +167,7 @@ export const Posts: CollectionConfig = {
     {
       name: 'publishedAt',
       type: 'date',
+      required: true,
       admin: {
         date: {
           pickerAppearance: 'dayAndTime',

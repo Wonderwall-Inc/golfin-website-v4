@@ -20,6 +20,7 @@ import {
   OverviewField,
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
+import { urlLocaleToLangCodeMap } from '@/constants/urlLocaleToLangCodeMap'
 export const Pages: CollectionConfig = {
   slug: 'pages',
   access: {
@@ -31,15 +32,25 @@ export const Pages: CollectionConfig = {
   admin: {
     defaultColumns: ['title', 'slug', 'updatedAt'],
     livePreview: {
-      url: ({ data }) => {
+      url: ({ data, locale }) => {
         const path = generatePreviewPath({
-          path: `/${typeof data?.slug === 'string' ? data.slug : ''}`,
+          locale: locale.code === 'en' ? 'en-us' : 'ja',
+          slug: typeof data?.slug === 'string' ? data.slug : '',
+          collection: 'pages',
         })
-        return `${process.env.NEXT_PUBLIC_SERVER_URL}${path}`
+
+        return process.env.NODE_ENV === 'development' ? `${process.env.NEXT_PUBLIC_SERVER_URL}${path}` : path
       },
     },
-    preview: (doc) =>
-      generatePreviewPath({ path: `/${typeof doc?.slug === 'string' ? doc.slug : ''}` }),
+    preview: (data, options) => {
+      const path = generatePreviewPath({
+        locale: options.locale === 'en' ? 'en-us' : 'ja',
+        slug: typeof data?.slug === 'string' ? data.slug : '',
+        collection: 'pages',
+      })
+
+      return process.env.NODE_ENV === 'development' ? `${process.env.NEXT_PUBLIC_SERVER_URL}${path}` : path
+    },
     useAsTitle: 'title',
   },
   fields: [

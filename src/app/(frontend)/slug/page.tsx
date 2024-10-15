@@ -12,24 +12,30 @@ import type { Page as PageType } from '@/payload-types'
 import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
+import { urlLocaleToLangCodeMap } from '@/constants/urlLocaleToLangCodeMap'
 
-export async function generateStaticParams() {
+export const dynamic = 'force-static'
+
+export async function generateStaticParams({ params }) {
   const payload = await getPayloadHMR({ config: configPromise })
-  const pages = await payload.find({
-    collection: 'pages',
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
+
+  const newsPosts = await payload.find({
+    collection: 'posts',
+    depth: 1,
+    limit: 10,
+    locale: urlLocaleToLangCodeMap.get((await params).locale),
+    where: {
+      'categories.title': {
+        equals: 'News'
+      }
+    }
   })
 
-  return pages.docs
-    ?.filter((doc) => {
-      return doc.slug !== 'home'
-    })
-    .map(({ slug }) => slug)
+  return newsPosts.docs.map(({ slug }) => slug)
 }
 
-export default async function Page({ params: { slug = 'home' } }) {
+export default async function Page({ params }) {
+  const { slug = 'home' } = (await params)
   const url = '/' + slug
 
   let page: PageType | null
@@ -37,15 +43,6 @@ export default async function Page({ params: { slug = 'home' } }) {
   page = await queryPageBySlug({
     slug,
   })
-
-  // Remove this code once your website is seeded
-  if (!page) {
-    page = homeStatic
-  }
-
-  if (!page) {
-    return <PayloadRedirects url={url} />
-  }
 
   const { hero, layout } = page
 
@@ -60,7 +57,8 @@ export default async function Page({ params: { slug = 'home' } }) {
   )
 }
 
-export async function generateMetadata({ params: { slug = 'home' } }): Promise<Metadata> {
+export async function generateMetadata({ params }): Promise<Metadata> {
+  const { slug } = (await params)
   const page = await queryPageBySlug({
     slug,
   })
@@ -68,8 +66,9 @@ export async function generateMetadata({ params: { slug = 'home' } }): Promise<M
   return generateMeta({ doc: page })
 }
 
-const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
-  const { isEnabled: draft } = draftMode()
+const queryPageBySlug = cache(async (params) => {
+  const { slug } = (await params)
+  const { isEnabled: draft } = await draftMode()
 
   const payload = await getPayloadHMR({ config: configPromise })
 
