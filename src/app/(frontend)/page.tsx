@@ -1,5 +1,12 @@
-import PageTemplate, { generateMetadata } from './slug/page'
 
-export default PageTemplate
 
-export { generateMetadata }
+import React from 'react'
+
+export const dynamic = 'force-static'
+
+export default async function Page({ params }) {
+ return (
+  <article className="pt-16 pb-24">
+  </article>
+ )
+}

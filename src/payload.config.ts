@@ -2,14 +2,11 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 
 import { payloadCloudPlugin } from '@payloadcms/plugin-cloud'
-import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import {
   BoldFeature,
-  FixedToolbarFeature,
-  HeadingFeature,
   ItalicFeature,
   LinkFeature,
   lexicalEditor,
@@ -19,13 +16,11 @@ import { UnderlineFeature } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
-
 import Categories from './collections/Categories'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import Users from './collections/Users'
-import { seedHandler } from './endpoints/seedHandler'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { revalidateRedirects } from './hooks/revalidateRedirects'
@@ -124,15 +119,6 @@ export default buildConfig({
   collections: [Pages, Posts, Media, Categories, Users],
   cors: [process.env.PAYLOAD_PUBLIC_SERVER_URL || ''].filter(Boolean),
   csrf: [process.env.PAYLOAD_PUBLIC_SERVER_URL || ''].filter(Boolean),
-  endpoints: [
-    // The seed endpoint is used to populate the database with some example data
-    // You should delete this endpoint before deploying your site to production
-    {
-      handler: seedHandler,
-      method: 'get',
-      path: '/seed',
-    },
-  ],
   globals: [Header, Footer],
   localization: {
     locales: ['en', 'ja'],
@@ -193,32 +179,6 @@ export default buildConfig({
           localized: true
         }
       }
-    }),
-    formBuilderPlugin({
-      fields: {
-        payment: false,
-      },
-      formOverrides: {
-        fields: ({ defaultFields }) => {
-          return defaultFields.map((field) => {
-            if ('name' in field && field.name === 'confirmationMessage') {
-              return {
-                ...field,
-                editor: lexicalEditor({
-                  features: ({ rootFeatures }) => {
-                    return [
-                      ...rootFeatures,
-                      FixedToolbarFeature(),
-                      HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-                    ]
-                  },
-                }),
-              }
-            }
-            return field
-          })
-        },
-      },
     }),
     payloadCloudPlugin(), // storage-adapter-placeholder
   ],

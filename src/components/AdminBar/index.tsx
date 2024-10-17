@@ -8,7 +8,18 @@ import { PayloadAdminBar } from 'payload-admin-bar'
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-const collectionLabels = {
+interface CollectionLabel {
+  plural: string
+  singular: string
+}
+
+interface CollectionLabels {
+  pages: CollectionLabel
+  posts: CollectionLabel
+  projects: CollectionLabel
+}
+
+const collectionLabels: CollectionLabels = {
   pages: {
     plural: 'Pages',
     singular: 'Page',

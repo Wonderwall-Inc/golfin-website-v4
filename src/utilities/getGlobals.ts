@@ -3,10 +3,11 @@ import type { Config } from 'src/payload-types'
 import configPromise from '@payload-config'
 import { getPayloadHMR } from '@payloadcms/next/utilities'
 import { unstable_cache } from 'next/cache'
+import { DataFromGlobalSlug } from 'payload'
 
 type Global = keyof Config['globals']
 
-async function getGlobal(slug: Global, depth = 0) {
+async function getGlobal(slug: Global, depth = 0): Promise<DataFromGlobalSlug<"footer" | "header">> {
   const payload = await getPayloadHMR({ config: configPromise })
 
   const global = await payload.findGlobal({

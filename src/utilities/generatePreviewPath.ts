@@ -11,7 +11,7 @@ type Props = {
  slug: string
 }
 
-export const generatePreviewPath = ({ locale, collection, slug }: Props) => {
+export const generatePreviewPath = ({ locale, collection, slug }: Props): string => {
  const path = `/${locale}/${collectionPrefixMap[collection]}/${slug}`
 
  const params = {
