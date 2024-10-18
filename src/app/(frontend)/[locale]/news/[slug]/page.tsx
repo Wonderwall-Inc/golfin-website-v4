@@ -1,7 +1,6 @@
 
 import type { Metadata } from 'next'
 
-import { RelatedPosts } from '@/blocks/RelatedPosts/Component'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
 import { getPayloadHMR } from '@payloadcms/next/utilities'
@@ -52,14 +51,6 @@ export default async function Post({ params }) {
             enableGutter={false}
           />
         </div>
-
-        {post.relatedPosts && post.relatedPosts.length > 0 && (
-          <RelatedPosts
-            locale={(await params).locale}
-            className="mt-12"
-            docs={post.relatedPosts.filter((post) => typeof post === 'object')}
-          />
-        )}
       </div>
     </article>
   )

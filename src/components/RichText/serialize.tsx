@@ -1,6 +1,5 @@
 import { BannerBlock } from '@/blocks/Banner/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
-import { CodeBlock, CodeBlockProps } from '@/blocks/Code/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import React, { Fragment, JSX } from 'react'
 import { CMSLink } from '@/components/Link'
@@ -9,7 +8,6 @@ import type { BannerBlock as BannerBlockProps } from '@/payload-types'
 
 import {
   IS_BOLD,
-  IS_CODE,
   IS_ITALIC,
   IS_STRIKETHROUGH,
   IS_SUBSCRIPT,
@@ -21,11 +19,10 @@ import type { Page } from '@/payload-types'
 export type NodeTypes =
   | DefaultNodeTypes
   | SerializedBlockNode<
-      | Extract<Page['layout'][0], { blockType: 'cta' }>
-      | Extract<Page['layout'][0], { blockType: 'mediaBlock' }>
-      | BannerBlockProps
-      | CodeBlockProps
-    >
+    | Extract<Page['layout'][0], { blockType: 'cta' }>
+    | Extract<Page['layout'][0], { blockType: 'mediaBlock' }>
+    | BannerBlockProps
+  >
 
 type Props = {
   nodes: NodeTypes[]
@@ -60,9 +57,6 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
                 {text}
               </span>
             )
-          }
-          if (node.format & IS_CODE) {
-            text = <code key={index}>{node.text}</code>
           }
           if (node.format & IS_SUBSCRIPT) {
             text = <sub key={index}>{text}</sub>
@@ -122,8 +116,6 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
               )
             case 'banner':
               return <BannerBlock className="col-start-2 mb-4" key={index} {...block} />
-            case 'code':
-              return <CodeBlock className="col-start-2" key={index} {...block} />
             default:
               return null
           }
